@@ -1,0 +1,153 @@
+
+
+/* FRAME ATTIVAZIONE
+
+
+
+| st1 | i| -24
+| p_c | -16
+| this | -8
+
+
+OGGETTO
+
+| vc| /| 0
+| v[0] | 8
+| v[1] | 16
+| v[2] | 24
+| v[3] | 32
+
+
+*/
+
+
+.set this, -8
+.set p_c, -16
+.set st1, -24
+.set i, -20
+
+.set vc, 0
+.set v,8
+
+
+
+.global _ZN2clC1EPc3st1
+_ZN2clC1EPc3st1:
+
+    #Prologo
+    push %rbp
+    mov %rsp,%rbp
+    sub $32, %rsp
+
+    #Parametri
+    mov %rdi, this(%rbp)
+    mov %rsi, p_c(%rbp)
+    mov %edx, st1(%rbp)
+
+    #Riferimenti
+    mov this(%rbp), %r8
+    mov p_c(%rbp), %r9
+
+    #Ciclo
+    movl $0, i(%rbp)
+ciclo:
+    cmpl $4, i(%rbp)
+    je end
+    movslq i(%rbp), %rcx
+
+    #corpo
+    movb (%r9), %al
+    mov %al, vc(%r8,%rcx,1)
+
+    movsbq st1(%rbp,%rcx,1), %rax
+    movsbq (%r9), %rdx
+    sub %rdx,%rax
+    mov %rax, v(%r8,%rcx,8)
+
+    incl i(%rbp)
+    jmp ciclo
+end:
+
+    leave
+    ret 
+
+
+
+/* Frame attivazione 
+
+| / | i | -96
+| ogg | -88
+|     | -80
+|     | -72
+|     | -64
+|     | -56
+| r_st1| -48
+| this | -40
+
+*/
+
+
+.set this_a, -48
+.set r_st1_a, -56
+.set ogg_a, -96
+.set i_a, -100
+
+.set vc_a, 0
+.set v_a,8
+
+.global _ZN2cl5elab1ER3st1
+_ZN2cl5elab1ER3st1:
+
+    #Prologo
+    push %rbp
+    mov %rsp, %rbp
+    sub $112, %rsp
+
+    #Parametri
+    mov %rdi, this_a(%rbp)
+    mov %rsi, r_st1_a(%rbp)
+
+    #Riferimenti
+    mov this_a(%rbp), %r8
+    mov  r_st1_a(%rbp), %r9
+    lea ogg_a(%rbp), %r10
+
+    #Costruttore
+    lea ogg_a(%rbp), %rdi
+lea mov this_a(%rbp), %rsi
+    mov (%r9), %edx
+
+    call _ZN2clC1EPc3st1
+
+
+
+    movl $0, i_a(%rbp)
+ciclo_a:
+    cmpl $4, i_a(%rbp)
+    je end_a
+    movslq i_a(%rbp), %rcx 
+
+
+
+
+    mov (%r9,%rcx,1), %al
+    cmp %al, vc_a(%r8,%rcx,1)
+    jae falso_a
+
+    mov vc_a(%r10,%rcx,1), %al
+    mov %al , vc_a(%r8,%rcx,1)
+
+    mov v_a(%r10,%rcx,8), %rax
+    add %rcx, %rax
+    movq %rax, v_a(%r8,%rcx,8)
+
+falso_a:
+
+    incl i_a(%rbp)
+    jmp ciclo_a
+end_a:
+
+    leave
+    ret
+
+
